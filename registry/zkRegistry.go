@@ -57,6 +57,7 @@ func (z *ZkRegistry) Initialize() {
 	} else {
 		vlog.Errorf("zk connect error:%+v\n", err)
 	}
+	z.watchSwitcherMap = make(map[string]chan bool)
 	z.subscribeMap = make(map[string]map[string]motan.NotifyListener)
 	z.nodeRs = make(map[string]ServiceNode)
 	z.StartSnapshot(GetSanpshotConf())

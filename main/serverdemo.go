@@ -6,6 +6,7 @@ import (
 	"time"
 
 	motan "github.com/weibocom/motan-go"
+	"github.com/weibocom/motan-go/gengo/protodef"
 )
 
 func main() {
@@ -13,8 +14,8 @@ func main() {
 }
 
 func runServerDemo() {
-	mscontext := motan.GetMotanServerContext("./serverdemo.yaml")
-	mscontext.RegisterService(&Motan2TestService{}, "")
+	mscontext := motan.GetMotanServerContext("./main/serverZkDemo.yaml")
+	//mscontext.RegisterService(&Motan2TestService{}, "")
 	mscontext.RegisterService(&MotanDemoService{}, "")
 	mscontext.Start(nil)
 	mscontext.ServicesAvailable() //注册服务后，默认并不提供服务，调用此方法后才会正式提供服务。需要根据实际使用场景决定提供服务的时机。作用与java版本中的服务端心跳开关一致。
@@ -23,9 +24,14 @@ func runServerDemo() {
 
 type MotanDemoService struct{}
 
-func (m *MotanDemoService) Hello(name string) string {
-	fmt.Printf("MotanDemoService hello:%s\n", name)
-	return "hello " + name
+func (m *MotanDemoService) Hello(book *tutorial.AddressBook) *tutorial.AddressBook {
+	fmt.Printf("book.People.length :%s\n", len(book.People))
+	fmt.Printf("book.People[0].Email :%s\n", book.People[0].Email)
+	fmt.Printf("book.People[0].name :%s\n", book.People[0].Name)
+	book.People[0].Name = book.People[0].Name + ">>>"
+	book.People[0].Email = book.People[0].Email + ">>>"
+	book.People[0].Phones[0].Number = book.People[0].Phones[0].Number + ">>>"
+	return book
 }
 
 type Motan2TestService struct{}

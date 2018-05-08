@@ -100,7 +100,10 @@ func (d *DefaultProvider) Call(request motan.Request) (res motan.Response) {
 		values := make([]interface{}, 0, inNum)
 		for i := 0; i < inNum; i++ {
 			// TODO how to reflect value pointer???
-			values = append(values, reflect.New(m.Type().In(i)).Type())
+			vlog.Infof("method args %d type %s", i, m.Type().In(i).String())
+			data := (reflect.New(m.Type().In(i).Elem())).Interface()
+			vlog.Infof("param %d type %s", i, reflect.ValueOf(data).String())
+			values = append(values, data)
 		}
 		err := request.ProcessDeserializable(values)
 		if err != nil {
@@ -115,7 +118,7 @@ func (d *DefaultProvider) Call(request motan.Request) (res motan.Response) {
 	ret := m.Call(vs)
 	mres := &motan.MotanResponse{RequestID: request.GetRequestID()}
 	if len(ret) > 0 { // only use first return value.
-		mres.Value = ret[0]
+		mres.Value = ret[0].Interface()
 		res = mres
 	}
 	return res

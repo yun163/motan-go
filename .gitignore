@@ -36,3 +36,6 @@ agentlogs
 main/magent*
 log/log.test*
 
+#binary
+build/bin/motan-server
+build/bin/motan-client
